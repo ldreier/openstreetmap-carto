@@ -1,21 +1,20 @@
-FROM ubuntu:focal
+FROM ubuntu:noble
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Style dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    ca-certificates curl gnupg postgresql-client python3 python3-distutils \
+    ca-certificates curl gnupg postgresql-client python3  \
     fonts-hanazono fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted \
-    mapnik-utils nodejs npm ttf-unifont unzip git && rm -rf /var/lib/apt/lists/*
+    mapnik-utils libmapnik-dev g++ build-essential nodejs npm unzip git && rm -rf /var/lib/apt/lists/*
 
 # Kosmtik with plugins, forcing prefix to /usr because Ubuntu sets
 # npm prefix to /usr/local, which breaks the install
 # We install kosmtik not from release channel, but directly from a specific commit on github.
-RUN npm set prefix /usr && npm install -g --unsafe-perm "git+https://git@github.com/kosmtik/kosmtik.git"
-
-WORKDIR /usr/lib/node_modules/kosmtik/
-RUN kosmtik plugins --install kosmtik-overpass-layer \
+RUN cd /root && npm install "git+https://git@github.com/ldreier/kosmtik.git"
+WORKDIR /root/node_modules/kosmtik
+RUN node index.js plugins --install kosmtik-overpass-layer \
                     --install kosmtik-fetch-remote \
                     --install kosmtik-overlay \
                     --install kosmtik-open-in-josm \
@@ -29,5 +28,4 @@ RUN kosmtik plugins --install kosmtik-overpass-layer \
 RUN mkdir -p /openstreetmap-carto
 WORKDIR /openstreetmap-carto
 
-USER 1000
 CMD sh scripts/docker-startup.sh kosmtik
