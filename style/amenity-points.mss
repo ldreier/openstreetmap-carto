@@ -1497,6 +1497,16 @@
       [int_access = 'restricted'] { marker-opacity: @private-opacity; }
     }
   }
+
+  [feature = 'man_made_mineshaft'][zoom >= 15] {
+    marker-file: url('symbols/man_made/mine_operational.svg');
+    marker-fill: @man-made-icon;
+  }
+
+  [feature = 'man_made_mineshaft_disused'][zoom >= 15] {
+    marker-file: url('symbols/man_made/mine_disused.svg');
+    marker-fill: @man-made-icon;
+  }
 }
 
 #amenity-low-priority {
@@ -1930,6 +1940,8 @@
   [feature = 'power_generator']["generator:source" = 'wind'][zoom >= 19],
   [feature = 'historic_city_gate'][zoom >= 17],
   [feature = 'natural_cave_entrance'][zoom >= 15],
+  [feature = 'man_made_mineshaft'][zoom >= 15],
+  [feature = 'man_made_mineshaft_disused'][zoom >= 15],
   [feature = 'man_made_mast'][zoom >= 18],
   [feature = 'man_made_tower'][zoom >= 17],
   [feature = 'man_made_storage_tank'][zoom >= 18],
@@ -1959,7 +1971,9 @@
     [feature = 'man_made_crane'] {
       text-dy: 10;
     }
-    [feature = 'natural_cave_entrance'] {
+    [feature = 'natural_cave_entrance'],
+    [feature = 'man_made_mineshaft'],
+    [feature = 'man_made_mineshaft_disused'] {
       text-dy: 11;
     }
     text-face-name: @standard-font;

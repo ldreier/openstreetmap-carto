@@ -111,7 +111,7 @@ Layer:
               ('leisure_' || (CASE WHEN leisure IN ('swimming_pool', 'playground', 'park', 'garden',
                                                     'golf_course', 'miniature_golf', 'sports_centre', 'stadium', 'pitch', 'ice_rink',
                                                     'track', 'dog_park', 'fitness_station', 'water_park') THEN leisure END)) AS leisure,
-              ('man_made_' || (CASE WHEN man_made IN ('works', 'wastewater_plant', 'water_works') THEN man_made END)) AS man_made,
+              ('man_made_' || (CASE WHEN man_made IN ('works', 'wastewater_plant', 'water_works', 'mineshaft') THEN man_made END)) AS man_made,
               ('natural_' || (CASE WHEN "natural" IN ('beach', 'shoal', 'heath', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub') THEN "natural" END)) AS "natural",
               ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" = 'mud' THEN "natural" ELSE tags->'wetland' END) END)) AS wetland,
               ('power_' || (CASE WHEN power IN ('plant', 'substation', 'generator') THEN power END)) AS power,
@@ -130,7 +130,7 @@ Layer:
               OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'taxi', 'university', 'college', 'school', 'hospital', 'kindergarten',
                              'grave_yard', 'place_of_worship', 'prison', 'clinic', 'ferry_terminal', 'marketplace', 'community_centre', 'social_facility',
                              'arts_centre', 'parking_space', 'bus_station', 'fire_station', 'police')
-              OR man_made IN ('works', 'wastewater_plant','water_works')
+              OR man_made IN ('works', 'wastewater_plant','water_works', 'mineshaft')
               OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
               OR power IN ('plant', 'substation', 'generator')
               OR shop IN ('mall')
@@ -1595,6 +1595,15 @@ Layer:
                 'man_made_' || CASE WHEN (man_made IN ('chimney', 'communications_tower', 'crane', 'lighthouse', 'mast', 'obelisk', 'silo', 'storage_tank',
                                                        'telescope', 'tower', 'wastewater_plant', 'water_tower', 'water_works', 'windmill', 'works')
                                             AND (tags->'location' NOT IN ('roof', 'rooftop') OR NOT (tags ? 'location'))) THEN man_made END,
+                'man_made_' || CASE
+                                  WHEN (man_made IN ('mineshaft')) THEN
+                                      CASE
+                                          WHEN (tags->'disused' IN ('yes')) OR
+                                                (tags->'abandoned' IN ('yes')) THEN 'mineshaft_disused'
+                                          ELSE 'mineshaft'
+                                      END
+                                  WHEN (historic IN ('mine_shaft')) THEN 'mineshaft_disused'
+                               END,
                 'landuse_' || CASE WHEN landuse IN ('reservoir', 'basin', 'recreation_ground', 'village_green', 'quarry', 'vineyard', 'orchard', 'cemetery',
                                                     'residential', 'garages', 'meadow', 'grass', 'allotments', 'forest', 'farmyard', 'farmland',
                                                     'greenhouse_horticulture', 'retail', 'industrial', 'railway', 'commercial', 'brownfield', 'landfill',

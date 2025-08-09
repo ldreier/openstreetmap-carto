@@ -440,6 +440,11 @@
     }
   }
 
+  [feature = 'man_made_mineshaft'],
+  [feature = 'man_made_mineshaft_disused'] {
+    polygon-fill: @quarry;
+  }
+
   [feature = 'landuse_railway'][zoom >= 10] {
     polygon-fill: @railway;
     [zoom >= 16][name != ''] {
